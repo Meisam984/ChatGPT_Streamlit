@@ -4,8 +4,10 @@ from PIL import Image
 from decouple import config
 import openai
 
-
 openai.api_key = config("API_KEY")
+openai.Model.list()
+
+image = Image.open("Logo.png")
 
 def ask(question:str) -> str:
     response = openai.Completion.create(model="text-davinci-003",
@@ -23,8 +25,11 @@ def ask(question:str) -> str:
 st.set_page_config(page_title="AI Teaching Assistant Bot",
                    layout="centered")
 
-# st.image(image,
-#          caption="Teaching Assitant Bot")
+st.image(image,
+         caption="Teaching Assitant Bot",
+         use_column_width=True)
+
+st.title("Teaching Assitant :red[Bot] :sunglasses:")
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
@@ -46,8 +51,8 @@ if user_input:
     st.session_state.generated.append(response)
 
 if st.session_state['generated']:
-    for i in range(len(st.session_state['generated'])-1, -1, -1):
-        message(st.session_state["generated"][i],
+    for i in range(len(st.session_state['generated']) - 1, -1, -1):
+        message(message=st.session_state["generated"][i],
                 key=str(i))
         message(st.session_state["past"][i],
                 is_user=True,
