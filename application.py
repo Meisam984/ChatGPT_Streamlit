@@ -1,14 +1,11 @@
 import streamlit as st
 from streamlit_chat import message
 from PIL import Image
-import os
+from decouple import config
 import openai
-import json
 
-with open("api_key.json") as f:
-    api_key = json.load(f)
 
-openai.api_key = api_key["API-Key"]
+openai.api_key = config("API_KEY")
 
 def ask(question:str) -> str:
     response = openai.Completion.create(model="text-davinci-003",
