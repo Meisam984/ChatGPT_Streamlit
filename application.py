@@ -5,7 +5,6 @@ from decouple import config
 import openai
 
 openai.api_key = config("API_KEY")
-openai.Model.list()
 
 image = Image.open("Logo.png")
 
