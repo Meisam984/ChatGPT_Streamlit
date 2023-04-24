@@ -53,4 +53,4 @@ if st.session_state.bot:
                 key=str(i)+"_bot_")
         message(st.session_state.user[i],
                 is_user=True,
-                key=str(i)+"_user")
+                key=str(i)+"_user_")
