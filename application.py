@@ -5,21 +5,7 @@ from decouple import config
 import openai
 
 openai.api_key = config("API_KEY")
-
 image = Image.open("Logo.png")
-
-def bot_response(query:str) -> str:
-    response = openai.Completion.create(model="text-davinci-003",
-                                        prompt=query,
-                                        temperature=0.7,
-                                        max_tokens=1024,
-                                        stop=["\\n"],
-                                        top_p=1,
-                                        frequency_penalty=0,
-                                        presence_penalty=0
-                                        )
-    answer = response.choices[0].text
-    return answer
 
 st.set_page_config(page_title="Chatbot",
                    layout="centered")
@@ -35,6 +21,19 @@ if 'bot' not in st.session_state:
 if 'user' not in st.session_state:
     st.session_state.user = []
 
+def bot_response(query:str) -> str:
+    response = openai.Completion.create(model="text-davinci-003",
+                                        prompt=query,
+                                        temperature=0.7,
+                                        max_tokens=1024,
+                                        stop=["\\n"],
+                                        top_p=1,
+                                        frequency_penalty=0,
+                                        presence_penalty=0
+                                        )
+    answer = response.choices[0].text
+    return answer
+
 def user_input() -> str:
     query = st.text_input(label="Me:",
                           value="Hi, How are you?",
@@ -42,6 +41,7 @@ def user_input() -> str:
     return query
 
 query = user_input()
+
 if query:
     response = bot_response(query)
     st.session_state.user.append(query)
