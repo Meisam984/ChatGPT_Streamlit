@@ -5,13 +5,12 @@ from decouple import config
 import openai
 
 openai.api_key = config("API_KEY")
-openai.Model.list()
 
 image = Image.open("Logo.png")
 
-def ask(question:str) -> str:
+def bot_response(query:str) -> str:
     response = openai.Completion.create(model="text-davinci-003",
-                                        prompt=question,
+                                        prompt=query,
                                         temperature=0.7,
                                         max_tokens=1024,
                                         stop=["\\n"],
@@ -22,38 +21,36 @@ def ask(question:str) -> str:
     answer = response.choices[0].text
     return answer
 
-st.set_page_config(page_title="AI Teaching Assistant Bot",
+st.set_page_config(page_title="Chatbot",
                    layout="centered")
 
 st.image(image,
-         caption="Teaching Assitant Bot",
          use_column_width=True)
 
-st.title("Teaching Assitant :red[Bot] :sunglasses:")
+st.title("AI Consultant :red[ChatGPT] :sunglasses:")
 
-if 'generated' not in st.session_state:
-    st.session_state['generated'] = []
+if 'bot' not in st.session_state:
+    st.session_state.bot = []
 
-if 'past' not in st.session_state:
-    st.session_state['past'] = []
+if 'user' not in st.session_state:
+    st.session_state.user = []
 
-def get_text() -> str:
-    input_text = st.text_input(label="You:",
-                               value="Hello, How are you?",
-                               key="input")
-    return input_text
+def user_input() -> str:
+    query = st.text_input(label="Me:",
+                          value="Hi, How are you?",
+                          key="input")
+    return query
 
-user_input = get_text()
+query = user_input()
+if query:
+    response = bot_response(query)
+    st.session_state.user.append(query)
+    st.session_state.bot.append(response)
 
-if user_input:
-    response = ask(user_input)
-    st.session_state.past.append(user_input)
-    st.session_state.generated.append(response)
-
-if st.session_state['generated']:
-    for i in range(len(st.session_state['generated']) - 1, -1, -1):
-        message(message=st.session_state["generated"][i],
-                key=str(i))
-        message(st.session_state["past"][i],
+if st.session_state.bot:
+    for i in range(len(st.session_state.bot) - 1, -1, -1):
+        message(message=st.session_state.bot[i],
+                key=str(i)+"_bot_")
+        message(st.session_state.user[i],
                 is_user=True,
-                key=str(i)+"_user")
+                key=str(i)+"_user_")
